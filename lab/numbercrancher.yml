@@ -1,0 +1,27 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: numbercrancher
+spec:
+  selector:
+    matchLabels:
+      app: numbercrancher
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: numbercrancher
+    spec:
+      containers:
+      - image: vitrage/lab
+        name: numbercrancher
+        ports:
+        - containerPort: 9345
+          name: numbercrancher
+        volumeMounts:
+        - name: numbercrancher
+          mountPath: /numbercrancher
+      volumes:
+      - name: numbercrancher
+        hostPath:
+          path: /tmp

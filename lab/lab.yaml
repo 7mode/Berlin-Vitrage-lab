@@ -1,0 +1,76 @@
+heat_template_version: 2018-03-02
+
+description: Hot Template to deploy a test servers for Vitrage
+
+resources:
+  keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name: vitrage
+      save_private_key: True
+      public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDOTwt2yE5dziD2dIN2NL824CyCMPok6pVYRLZfsxG7KCtoHtgHAOfY9s5PXTHBFsZ/rawD8CAvg40reXc0iV6hcWEAkkkq7T+OYL7/kJJS/Rkv9lp5gubwyb7RbepYv5zpZl8xuoey5hMFmdqABsYNpzBeISfN82PoTyf+L+nQC8u8bB+qfheGkYGv2lLhJeF2Mkl5pd5Gx2PjJbf2cOMsETyY6SaIkN7vh+z3cJOA7+rGnb0otVG4HGTjikJho0n/MF5RJCS1YSRvPVr9bBudjZXT5glZ2mg35+tGegP3HOQZa1NLhcgJX9rp/4u3qhpM8V4gqvEf9cMMQ4dIotqB ubuntu@server
+
+  security_group_plus:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: vitrage
+      rules:
+      # All egress traffic
+      - direction: egress
+        ethertype: IPv4
+      - direction: egress
+        ethertype: IPv6
+      # All ingress traffic
+      - direction: ingress
+        ethertype: IPv4
+      - direction: ingress
+        ethertype: IPv6
+      # SSH
+      - protocol: tcp
+        direction: ingress
+        port_range_min: 22
+        port_range_max: 22
+
+  floating_ip_1:
+    type: OS::Nova::FloatingIP
+    properties:
+      pool: public
+
+  floating_ip_2:
+    type: OS::Nova::FloatingIP
+    properties:
+      pool: public
+
+  test_server_1:
+    type: OS::Nova::Server
+    properties:
+      name: test1
+      image: cirros-0.3.5-x86_64-disk
+      flavor: m1.nano
+      key_name: { get_resource: keypair }
+      security_groups: [ { get_resource: security_group_plus } ]
+      networks:
+      - network: private
+
+  test_server_2:
+    type: OS::Nova::Server
+    properties:
+      name: test2
+      image: cirros-0.3.5-x86_64-disk
+      flavor: m1.nano
+      key_name: { get_resource: keypair }
+      security_groups: [ { get_resource: security_group_plus } ]
+      networks:
+      - network: private
+
+  association_1:
+    type: OS::Nova::FloatingIPAssociation
+    properties:
+      floating_ip: { get_resource: floating_ip_1 }
+      server_id: { get_resource: test_server_1 }
+
+  association_2:
+    type: OS::Nova::FloatingIPAssociation
+    properties:
+      floating_ip: { get_resource: floating_ip_2 }
+      server_id: { get_resource: test_server_2 }
