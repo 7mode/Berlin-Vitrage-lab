@@ -1,0 +1,87 @@
+metadata:
+ name: rca_between_host_and_k8s
+ description: RCA bteween host and kubernetes cluster
+ type: standard
+ version: 2
+definitions:
+ entities:
+  - entity: # add prometeus alarm on host
+     category: 
+     type: 
+     name: 
+     template_id: 
+  - entity:
+     category: ALARM
+     type: prometheus
+     name: numberCrancherSlow
+     template_id: prometheus_pod_alarm
+  - entity:
+     category: ALARM
+     type: vitrage
+     name: cluster performance degragation
+     template_id: k8s_alarm
+  - entity: # add k8s cluster entity
+     category: 
+     type: kubernetes.cluster
+     template_id: 
+  - entity: # add host resource
+     category: 
+     type: 
+     template_id:
+ relationships:
+  - relationship: # add relationship k8s comprised host
+     source: 
+     relationship_type: comprised
+     target: 
+     template_id : 
+  - relationship: # add relationship prometheus alarm on host
+     source: 
+     relationship_type: 
+     target: 
+     template_id : 
+  - relationship: # add relationship prometheus alarm on pod (on k8s cluster)
+     source: 
+     relationship_type: 
+     target: 
+     template_id : 
+  - relationship: # add relationship vitrage alarms on k8s cluster
+     source: 
+     relationship_type: 
+     target: 
+     template_id : 
+
+scenarios:
+ - scenario: # add scenario to raise vitrage alarm and set state to SUBOPTIMAL on k8s cluster
+             # when k8s cluster is comprised of host and prometheus alarms are on host and pod
+    condition: 
+    actions:
+     - action:
+        action_type: 
+        action_target:
+         target: 
+        properties:
+         state: 
+     - action:
+        action_type: 
+        action_target:
+         target: 
+        properties:
+         alarm_name: 
+         severity: warning
+ - scenario: # add scenario to add 2 causual relationships 
+             # 1. between host prometheus alarm and k8s vitrage alarm
+             # 2. between k8s vitrage alarm and pod prometheus alarm
+    condition: 
+    actions:
+     - action:
+        action_type: 
+        action_target:
+         source: 
+         target: 
+     - action:
+        action_type: 
+        action_target:
+         source: 
+         target: 
+
+
